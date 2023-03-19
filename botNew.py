@@ -22,8 +22,8 @@ def run_discord_bot():
     intents.members = True
 
     bot = commands.Bot(command_prefix='--', intents=intents) 
-    TOKEN_Discord = "MTA3NTI5NjU2NjI5MTczMDQ2Mg.G5qDEL.uvsLNP7GXYjB57aZ61hyYL0Y426C0V0NagqihQ"
-    TOKEN_Riot = "RGAPI-2977359e-84b1-4db9-9240-d63a780837bc"
+    TOKEN_Discord = ""
+    TOKEN_Riot = ""
 
     def clearNameSpaces(nameWithSpaces):
         result = ""
