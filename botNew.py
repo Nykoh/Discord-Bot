@@ -8,6 +8,8 @@ from discord.ext import commands
 import responses
 from discord import app_commands
 import array
+import urllib.request
+import urllib3
 
 async def send_message(message, user_message, is_private):
     try:
@@ -43,13 +45,21 @@ def run_discord_bot():
         if region == "br":
             API_Riot = "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" + name + "?api_key=" + TOKEN_Riot
         response = requests.get(API_Riot)
-        jsonDataSummoner = response.json()
-        sEncryptedId = jsonDataSummoner['id']
-        sName = jsonDataSummoner['name']
-        sLevel = "Lvl. " + str(jsonDataSummoner['summonerLevel'])
-        sIcon = "http://ddragon.leagueoflegends.com/cdn/13.4.1/img/profileicon/" + str(jsonDataSummoner['profileIconId']) + ".png"
-        return (sName, sLevel, sIcon, sEncryptedId)
-
+        if response.status_code == 200:
+            jsonDataSummoner = response.json()
+            sEncryptedId = jsonDataSummoner['id']
+            sName = jsonDataSummoner['name']
+            sLevel = "Lvl. " + str(jsonDataSummoner['summonerLevel'])
+            sIcon = "http://ddragon.leagueoflegends.com/cdn/13.6.1/img/profileicon/" + str(jsonDataSummoner['profileIconId']) + ".png"
+            print(response.status_code)
+            return (sName, sLevel, sIcon, sEncryptedId)
+        else:
+            print("not found")
+            return None
+            
+        
+        #return (sName, sLevel, sIcon, sEncryptedId)
+        
 
     def fetchMasteries(region, sEncryptedId):
         limit = "5" #shit
@@ -92,11 +102,22 @@ def run_discord_bot():
                     arrname.append(name)
                     arrimgs.append(iconURL + name + ".png")
                     #print(time)
-                    
-                    
-                    
+        
+        print(arrname)
 
+        if arrname[0] == 'Shen':
+            arrname[0] = 'Shen :goat:'
+        elif arrname[1] == 'Shen':
+            arrname[1] = 'Shen :goat:'
+        elif arrname[2] == 'Shen':
+            arrname[2] = 'Shen :goat:'
+        elif arrname[3] == 'Shen':
+            arrname[3] = 'Shen :goat:'
+        elif arrname[4] == 'Shen':
+            arrname[4] = 'Shen :goat:'
+        
         return [arrname, arrpoints, arrlevels, arrimgs, arrtime]
+
 
     @bot.command()
     async def eune(ctx, *nameWithSpaces):
@@ -289,6 +310,10 @@ def run_discord_bot():
     @bot.tree.command(name="goodshit")
     async def goodshit(interaction: discord.Interaction):
         await interaction.response.send_message(f"https://www.twitch.tv/xpetu")
+    
+    @bot.tree.command(name="help")
+    async def help(interaction: discord.Interaction):
+        await interaction.response.send_message(f"```--commands: \n\n --(region) (name) - shows summoner level + champion masteries \n \n Supported Regions: \n North America -> na \n Europe West -> euw \n Europe East -> eune \n Korea -> kr \n Brazil -> br \n\n\n Slash(/) Commands: \n\n /hello \n /say \n /goodshit \n /specmatch - insights on someone's current game (only for na server) (not done yet) ```")
 
     
     
@@ -296,7 +321,7 @@ def run_discord_bot():
     
     @bot.tree.command(name="specmatch", description="Shows the current match of the desired summoner.")
     @app_commands.describe(name="What is the summoner's name?")
-    async def specmatch(interaction: discord.Interaction, name: str):
+    async def specmatch(ctx: commands.Context, name: str): #changed the interaction.discord thing. it seems to work 
         API_Riot = "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" + name + "?api_key=" + TOKEN_Riot
         response = requests.get(API_Riot)
         jsonDataSummoner = response.json()
@@ -304,7 +329,7 @@ def run_discord_bot():
         print(encryptedSummonerId)
         sName = jsonDataSummoner['name']
         sLevel = "Lvl. " + str(jsonDataSummoner['summonerLevel'])
-        sIcon = "http://ddragon.leagueoflegends.com/cdn/13.4.1/img/profileicon/" + str(jsonDataSummoner['profileIconId']) + ".png"
+        sIcon = "http://ddragon.leagueoflegends.com/cdn/13.6.1/data/en_US/profileicon.json" + str(jsonDataSummoner['profileIconId']) + ".png"
         print(sName)
         print(sLevel)
         
@@ -322,6 +347,7 @@ def run_discord_bot():
 
         gameMode = str(CurrentGameParticipant['gameMode'])
         participants = (CurrentGameParticipant['participants'])
+        gameId = (CurrentGameParticipant['gameId'])
         #print(participant[0]) #limits the scope to just the summoner searched. (actually idk if it works) (it doesnt)
 
         print(participants)
@@ -341,49 +367,107 @@ def run_discord_bot():
         #print(participants[0])
         #print(participants[1])
 
+        
+        
+        
+        #Match info (kills, etc)
+        
+        #API_Riot_Summoner = f"https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{name}"
+        #responseGameSummoner = requests.get(API_Riot_Summoner)
+        #CurrentGameSummoner = responseGameSummoner.json()
+
+        #puuid = (CurrentGameSummoner['puuid'])
+        #print(puuid)
+        #print("this the the thing")
+
+        #API_Riot_Game_Match = f"https://na1.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids"
+        #responseGameMatch = requests.get(API_Riot_Game_Match)
+        #summonerGameMatch = responseGameMatch.json()
+        #print(summonerGameMatch)
+
+        #API_Riot_Game_Info = f"https://na1.api.riotgames.com/lol/match/v5/matches/{gameId}" #need to use differnet puuid match api for it to work
+        #responseGameInfo = requests.get(API_Riot_Game_Info)
+        #CurrentGameInfo = responseGameInfo.json()
+
+        #infoData =  (CurrentGameInfo['info'])
+        #print(infoData)
+
+        print(arrname)
+        print(arrimgs)
+
+        if gameMode == 'CLASSIC':
+            gameMode = "Summoner's Rift"
+
         if name == participants[0]['summonerName']:
             print("it worked")
             print("1")
-            await interaction.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[0]}`.")
-            #embed = discord.Embed(title=name[0], description=gameMode[1], color=0xFFD500)
-            #embed.set_thumbnail(url=arrname[0])
-            #await discord.Interaction(embed=embed)
+            #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[0]}`.")
+            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed.set_thumbnail(url=arrimgs[0])
+            await ctx.response.send_message(embed=embed)
         elif name == participants[1]['summonerName']:
             print("it worked")
             print("2")
-            await interaction.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[1]}`.")
+            #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[1]}`.")
+            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed.set_thumbnail(url=arrimgs[1])
+            await ctx.response.send_message(embed=embed)
         elif name == participants[2]['summonerName']:
             print("it worked")
             print("3")
-            await interaction.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[2]}`.")
+            #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[2]}`.")
+            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed.set_thumbnail(url=arrimgs[2])
+            await ctx.response.send_message(embed=embed)
         elif name == participants[3]['summonerName']:
             print("it worked")
             print("4")
-            await interaction.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[3]}`.")
+            #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[3]}`.")
+            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed.set_thumbnail(url=arrimgs[3])
+            await ctx.response.send_message(embed=embed)
         elif name == participants[4]['summonerName']:
             print("it worked")
             print("5")
-            await interaction.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[4]}`.")
+            #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[4]}`.")
+            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed.set_thumbnail(url=arrimgs[4])
+            await ctx.response.send_message(embed=embed)
         elif name == participants[5]['summonerName']:
             print("it worked")
             print("6")
-            await interaction.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[5]}`.")
+            #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[5]}`.")
+            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed.set_thumbnail(url=arrimgs[5])
+            await ctx.response.send_message(embed=embed)
         elif name == participants[6]['summonerName']:
             print("it worked")
             print("7")
-            await interaction.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[6]}`.")
+            #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[6]}`.")
+            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed.set_thumbnail(url=arrimgs[6])
+            await ctx.response.send_message(embed=embed)
         elif name == participants[7]['summonerName']:
             print("it worked")
             print("8")
-            await interaction.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[7]}`.")
+            #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[7]}`.")
+            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed.set_thumbnail(url=arrimgs[7])
+            await ctx.response.send_message(embed=embed)
         elif name == participants[8]['summonerName']:
             print("it worked")
             print("9")
-            await interaction.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[8]}`.")
+            #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[8]}`.")
+            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed.set_thumbnail(url=arrimgs[8])
+            await ctx.response.send_message(embed=embed)
         elif name == participants[9]['summonerName']:
             print("it worked")
             print("10")
-            await interaction.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[9]}`.")
+            #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[9]}`.")
+            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed.set_thumbnail(url=arrimgs[9])
+            await ctx.response.send_message(embed=embed)
         else:
             print("you fucked up")
 
@@ -420,7 +504,69 @@ def run_discord_bot():
         
         #return (sName, sLevel, sIcon, sEncryptedId)
 
+    @bot.tree.command(name="inspirobot")
+    async def inspirobot(interaction: discord.Interaction):
+        http =urllib3.PoolManager()
+        response = http.request('GET','https://inspirobot.me/api?generate=true')
+        image = response.data
+        imageNew = image.decode('utf-8')
+        print(imageNew)
+
+        await interaction.response.send_message(f"{imageNew}")
     
+    #SEARCH FOR SPECIFIC CHAMP'S INFO
     
-    
+    @bot.tree.command(name="googlechamp", description="shows character lore")
+    @app_commands.describe(name="What is the champion's name?")
+    async def googlechamp(ctx: commands.Context, name: str): #consider changing interaction: discord.Interaction to ctx: commands.Context found in previous command. might fix embed issue
+        url = f"http://ddragon.leagueoflegends.com/cdn/13.6.1/data/en_US/champion/{name}.json"
+        champBanner = f"http://ddragon.leagueoflegends.com/cdn/img/champion/splash/{name}_0.jpg"
+
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            data = response.json()
+            champions = data["data"]
+
+            champion_name = name
+            if champion_name in champions:
+                champion_data = champions[champion_name]
+                print("Champion Name:", champion_name)
+                print("Champion Title:", champion_data["title"])
+                title = (champion_data["title"])
+                print("Champion Lore:", champion_data["blurb"])
+                blurb = (champion_data["lore"])
+                print("Champion Stats:")
+                print("\tHealth Points:", champion_data["stats"]["hp"])
+                print("\tAttack Damage:", champion_data["stats"]["attackdamage"])
+                print("\tMagic Damage:", champion_data["stats"]["mpperlevel"])
+                baseHP = (champion_data["stats"]["hp"])
+                baseAD = (champion_data["stats"]["attackdamage"])
+                baseAP = (champion_data["stats"]["mpperlevel"])
+                image = (champion_data["image"])
+                print(image)
+                print("\n")
+                spells = (champion_data["spells"])
+                print(spells)
+                
+                abilities = champion_data["spells"]
+                ability_message = ""
+                for ability in abilities:
+                     ability_message += f"**{ability['name']}:**\n\t{ability['description']}\n\n"
+                    
+                print(ability_message)
+
+                #await ctx.response.send_message(f"```Champion Name: {name} \n\nChampion Title: {title} \n\nBio: {blurb} \n\nChampion Base Stats: \n\tHealth Points: {baseHP} \n\tAttack Damage: {baseAD} \n\tMagic Damage: {baseAP}\n\n\n Spells:\n\n{ability_message}``` \n{champBanner}")
+                embed = discord.Embed(title=f"__{name} {title}__", description=f"\n\n\n**Bio:** {blurb} \n\n**Champion Base Stats:** \n\tHealth Points: {baseHP} \n\tAttack Damage: {baseAD} \n\tMagic Damage: {baseAP}\n\n __Spells:__\n\n{ability_message}", color=0xFFD500)
+                embed.set_image(url=champBanner)
+                await ctx.response.send_message(embed=embed)
+
+                
+            else:
+                print("Champion not found. (try capitalizing)")
+                await ctx.response.send_message(f"The Champion {name} was not found. (try capitalizing)")
+        else:
+            print("Error:", response.status_code)
+            await ctx.response.send_message(f"`Error {response.status_code}`. Check spelling and capitalization.")
+
     bot.run(TOKEN_Discord)
