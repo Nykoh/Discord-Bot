@@ -11,6 +11,7 @@ import array
 import urllib.request
 import urllib3
 from discord.interactions import Interaction
+import datetime, time
 
 async def send_message(message, user_message, is_private):
     try:
@@ -24,9 +25,13 @@ def run_discord_bot():
     intents = discord.Intents.all()
     intents.members = True
 
+    global startTime
+    startTime = time.time()
+    print(startTime)
+
     bot = commands.Bot(command_prefix='--', intents=intents) 
-    TOKEN_Discord = ""
-    TOKEN_Riot = ""
+    TOKEN_Discord = "MTA3NTI5NjU2NjI5MTczMDQ2Mg.GXVzzv.iQfZa1xeBIGUmrqBJRUhmBLqYDhL7NDAueeRXs"
+    TOKEN_Riot = "RGAPI-123fcc60-a389-412e-9977-f286bc3cb381"
 
     def clearNameSpaces(nameWithSpaces):
         result = ""
@@ -515,6 +520,17 @@ def run_discord_bot():
 
         await interaction.response.send_message(f"{imageNew}")
     
+    @bot.tree.command(name="uptime", description="View the uptime for the bot.")
+    async def uptime(interaction: discord.Interaction):
+        currentTime = time.time()
+        print(currentTime)
+        timeDifference = int(round(currentTime - startTime))
+        convertTime = str(datetime.timedelta(seconds = timeDifference))
+        print(f"The bot has been running for {timeDifference} seconds.")
+        await interaction.response.send_message(f"The bot has been running for `{convertTime}` seconds.")
+
+         
+
     #SEARCH FOR SPECIFIC CHAMP'S INFO
     
     #class MyView(discord.ui.View):
