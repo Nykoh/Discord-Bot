@@ -10,6 +10,7 @@ from discord import app_commands
 import array
 import urllib.request
 import urllib3
+from discord.interactions import Interaction
 
 async def send_message(message, user_message, is_private):
     try:
@@ -402,70 +403,70 @@ def run_discord_bot():
             print("it worked")
             print("1")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[0]}`.")
-            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[0]}.", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[0])
             await ctx.response.send_message(embed=embed)
         elif name == participants[1]['summonerName']:
             print("it worked")
             print("2")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[1]}`.")
-            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[1]}.", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[1])
             await ctx.response.send_message(embed=embed)
         elif name == participants[2]['summonerName']:
             print("it worked")
             print("3")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[2]}`.")
-            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed = discord.Embed(title=name, ddescription=f"{gameMode} \n\n Currently playing {arrname[2]}.", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[2])
             await ctx.response.send_message(embed=embed)
         elif name == participants[3]['summonerName']:
             print("it worked")
             print("4")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[3]}`.")
-            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[3]}.", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[3])
             await ctx.response.send_message(embed=embed)
         elif name == participants[4]['summonerName']:
             print("it worked")
             print("5")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[4]}`.")
-            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[4]}.", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[4])
             await ctx.response.send_message(embed=embed)
         elif name == participants[5]['summonerName']:
             print("it worked")
             print("6")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[5]}`.")
-            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[5]}.", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[5])
             await ctx.response.send_message(embed=embed)
         elif name == participants[6]['summonerName']:
             print("it worked")
             print("7")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[6]}`.")
-            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[6]}.", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[6])
             await ctx.response.send_message(embed=embed)
         elif name == participants[7]['summonerName']:
             print("it worked")
             print("8")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[7]}`.")
-            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[7]}.", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[7])
             await ctx.response.send_message(embed=embed)
         elif name == participants[8]['summonerName']:
             print("it worked")
             print("9")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[8]}`.")
-            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[8]}.", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[8])
             await ctx.response.send_message(embed=embed)
         elif name == participants[9]['summonerName']:
             print("it worked")
             print("10")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[9]}`.")
-            embed = discord.Embed(title=name, description=gameMode, color=0xFFD500)
+            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[9]}.", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[9])
             await ctx.response.send_message(embed=embed)
         else:
@@ -516,11 +517,27 @@ def run_discord_bot():
     
     #SEARCH FOR SPECIFIC CHAMP'S INFO
     
-    @bot.tree.command(name="googlechamp", description="shows character lore")
+    #class MyView(discord.ui.View):
+        #@discord.ui.button(label="More", style=discord.ButtonStyle.primary)
+        #async def button_callback(self, interaction: discord.Interaction, button: discord.ui.button):
+
+            
+
+            #embedEdit = discord.Embed(title=f"edited title", description="edited description", color=0xFFD500)
+            #embedEdit.set_image(url=f"http://ddragon.leagueoflegends.com/cdn/img/champion/splash/{}.jpg")
+            #await interaction.message.edit(embed=embedEdit)
+
+    
+    
+    @bot.tree.command(name="googlechamp", description="Google a champion from League of Legends")
     @app_commands.describe(name="What is the champion's name?")
     async def googlechamp(ctx: commands.Context, name: str): #consider changing interaction: discord.Interaction to ctx: commands.Context found in previous command. might fix embed issue
-        url = f"http://ddragon.leagueoflegends.com/cdn/13.6.1/data/en_US/champion/{name}.json"
-        champBanner = f"http://ddragon.leagueoflegends.com/cdn/img/champion/splash/{name}_0.jpg"
+        nameCorrect = name.capitalize()
+        url = f"http://ddragon.leagueoflegends.com/cdn/13.6.1/data/en_US/champion/{nameCorrect}.json"
+        global nameEdit
+        nameEdit = nameCorrect
+        global champBanner
+        champBanner = f"http://ddragon.leagueoflegends.com/cdn/img/champion/splash/{nameCorrect}_0.jpg"
 
         response = requests.get(url)
 
@@ -528,45 +545,76 @@ def run_discord_bot():
             data = response.json()
             champions = data["data"]
 
-            champion_name = name
+            champion_name = nameCorrect
             if champion_name in champions:
                 champion_data = champions[champion_name]
-                print("Champion Name:", champion_name)
-                print("Champion Title:", champion_data["title"])
+                #print("Champion Name:", champion_name)
+                #print("Champion Title:", champion_data["title"])
+                global title
                 title = (champion_data["title"])
-                print("Champion Lore:", champion_data["blurb"])
+                #print("Champion Lore:", champion_data["blurb"])
+                global blurb
                 blurb = (champion_data["lore"])
-                print("Champion Stats:")
-                print("\tHealth Points:", champion_data["stats"]["hp"])
-                print("\tAttack Damage:", champion_data["stats"]["attackdamage"])
-                print("\tMagic Damage:", champion_data["stats"]["mpperlevel"])
+                #print("Champion Stats:")
+                #print("\tHealth Points:", champion_data["stats"]["hp"])
+                #print("\tAttack Damage:", champion_data["stats"]["attackdamage"])
+                #print("\tMagic Damage:", champion_data["stats"]["mpperlevel"])
+                global baseHP
+                global baseAD
+                global baseAP
+                global spells
+                global abilities
+                global ability
+                global ability_message
+                global difficulty
                 baseHP = (champion_data["stats"]["hp"])
                 baseAD = (champion_data["stats"]["attackdamage"])
                 baseAP = (champion_data["stats"]["mpperlevel"])
+                difficulty = (champion_data["info"]["difficulty"])
                 image = (champion_data["image"])
-                print(image)
-                print("\n")
+                #print(image)
+                #print("\n")
                 spells = (champion_data["spells"])
-                print(spells)
+                #print(spells)
                 
                 abilities = champion_data["spells"]
                 ability_message = ""
                 for ability in abilities:
                      ability_message += f"**{ability['name']}:**\n\t{ability['description']}\n\n"
                     
-                print(ability_message)
+                #print(ability_message)
 
                 #await ctx.response.send_message(f"```Champion Name: {name} \n\nChampion Title: {title} \n\nBio: {blurb} \n\nChampion Base Stats: \n\tHealth Points: {baseHP} \n\tAttack Damage: {baseAD} \n\tMagic Damage: {baseAP}\n\n\n Spells:\n\n{ability_message}``` \n{champBanner}")
-                embed = discord.Embed(title=f"__{name} {title}__", description=f"\n\n\n**Bio:** {blurb} \n\n**Champion Base Stats:** \n\tHealth Points: {baseHP} \n\tAttack Damage: {baseAD} \n\tMagic Damage: {baseAP}\n\n __Spells:__\n\n{ability_message}", color=0xFFD500)
+                embed = discord.Embed(title=f"__{nameCorrect}, {title}__", description=f"\n\n\n**Bio:** {blurb} \n\n **Difficulty:** {difficulty} / 10", color=0xFFD500)
                 embed.set_image(url=champBanner)
-                await ctx.response.send_message(embed=embed)
+                await ctx.response.send_message(embed=embed, view=MyViewMore())
 
                 
             else:
-                print("Champion not found. (try capitalizing)")
-                await ctx.response.send_message(f"The Champion {name} was not found. (try capitalizing)")
+                print(f"Champion `{nameCorrect}` not found.")
+                await ctx.response.send_message(f"The Champion {nameCorrect} was not found.")
         else:
             print("Error:", response.status_code)
-            await ctx.response.send_message(f"`Error {response.status_code}`. Check spelling and capitalization.")
+            await ctx.response.send_message(f"`Error {response.status_code}` : champion `{nameCorrect}` not found. Check spelling.")
+    
+    
+    class MyViewMore(discord.ui.View):
+        @discord.ui.button(label="More", style=discord.ButtonStyle.primary)
+        async def button_callback(self, interaction: discord.Interaction, button: discord.ui.button):
 
+            embedEdit = discord.Embed(title=f"__{nameEdit}, {title}__", description=f"\n\n\n**Bio:** {blurb} \n\n**Champion Base Stats:** \n\tHealth Points: {baseHP} \n\tAttack Damage: {baseAD} \n\tMagic Damage: {baseAP}\n\n **Difficulty:** {difficulty} / 10\n\n __Spells:__\n\n{ability_message}", color=0xFFD500)
+            embedEdit.set_image(url=champBanner)
+            await interaction.message.edit(embed=embedEdit, view=MyViewLess())
+            await interaction.response.defer()
+    
+    class MyViewLess(discord.ui.View):
+        @discord.ui.button(label="Less", style=discord.ButtonStyle.primary)
+        async def button_callback(self, interaction: discord.Interaction, button: discord.ui.button):
+
+            embedEditLess = discord.Embed(title=f"__{nameEdit}, {title}__", description=f"\n\n\n**Bio:** {blurb} \n\n **Difficulty:** {difficulty} / 10", color=0xFFD500)
+            embedEditLess.set_image(url=champBanner)
+            await interaction.message.edit(embed=embedEditLess, view=MyViewMore())
+            await interaction.response.defer()
+    
+    
     bot.run(TOKEN_Discord)
