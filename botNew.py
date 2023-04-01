@@ -30,8 +30,8 @@ def run_discord_bot():
     print(startTime)
 
     bot = commands.Bot(command_prefix='--', intents=intents) 
-    TOKEN_Discord = "MTA3NTI5NjU2NjI5MTczMDQ2Mg.GXVzzv.iQfZa1xeBIGUmrqBJRUhmBLqYDhL7NDAueeRXs"
-    TOKEN_Riot = "RGAPI-123fcc60-a389-412e-9977-f286bc3cb381"
+    TOKEN_Discord = ""
+    TOKEN_Riot = ""
 
     def clearNameSpaces(nameWithSpaces):
         result = ""
