@@ -12,6 +12,9 @@ import urllib.request
 import urllib3
 from discord.interactions import Interaction
 import datetime, time
+import selenium
+import csv
+import asyncio
 
 async def send_message(message, user_message, is_private):
     try:
@@ -32,6 +35,23 @@ def run_discord_bot():
     bot = commands.Bot(command_prefix='--', intents=intents) 
     TOKEN_Discord = ""
     TOKEN_Riot = ""
+
+
+        #initializes the ugg scraper to rewrite the Tierlist.csv file (first part only, second part formats it in some way)
+
+    #with open("lol tier list.py") as f:
+        #exec(f.read())
+
+    #with open('Tierlist.csv', mode='r') as csv_file:
+            #csv_reader = csv.DictReader(csv_file)
+            #line_count = 0
+            #for row in csv_reader:
+                #if line_count ==0:
+                    #print(f'Column names are {", ".join(row)}')
+                    #line_count += 1
+                #print(f'\t{row["Champion Name"]} has a winrate of {row["Win Rate"]}, and has a ban rate of {row["Ban Rate"]}.')
+                #line_count += 1
+            #print(f'Processed {line_count} lines.')
 
     def clearNameSpaces(nameWithSpaces):
         result = ""
@@ -319,7 +339,7 @@ def run_discord_bot():
     
     @bot.tree.command(name="help")
     async def help(interaction: discord.Interaction):
-        await interaction.response.send_message(f"```--commands: \n\n --(region) (name) - shows summoner level + champion masteries \n \n Supported Regions: \n North America -> na \n Europe West -> euw \n Europe East -> eune \n Korea -> kr \n Brazil -> br \n\n\n Slash(/) Commands: \n\n /hello \n /say \n /goodshit \n /specmatch - insights on someone's current game (only for na server) (not done yet) ```")
+        await interaction.response.send_message(f"```--commands: \n\n --(region) (name) - shows summoner level + champion masteries \n \n Supported Regions: \n North America -> na \n Europe West -> euw \n Europe East -> eune \n Korea -> kr \n Brazil -> br \n\n\n Slash(/) Commands: \n\n /hello \n /say \n /goodshit \n /inspirobot - get inspired by ai \n /specmatch - insights on someone's current game (only for na server) (not done yet) \n /googlechamp - info on specific league champ ```")
 
     
     
@@ -354,7 +374,7 @@ def run_discord_bot():
         gameMode = str(CurrentGameParticipant['gameMode'])
         participants = (CurrentGameParticipant['participants'])
         gameId = (CurrentGameParticipant['gameId'])
-        #print(participant[0]) #limits the scope to just the summoner searched. (actually idk if it works) (it doesnt)
+        print(participants) #work on making finishing spec match (maybe by doing something like porofessor)
 
         print(participants)
         for champion in participants:
@@ -530,25 +550,24 @@ def run_discord_bot():
         await interaction.response.send_message(f"The bot has been running for `{convertTime}` seconds.")
 
          
-
+###############################################
     #SEARCH FOR SPECIFIC CHAMP'S INFO
-    
-    #class MyView(discord.ui.View):
-        #@discord.ui.button(label="More", style=discord.ButtonStyle.primary)
-        #async def button_callback(self, interaction: discord.Interaction, button: discord.ui.button):
-
-            
-
-            #embedEdit = discord.Embed(title=f"edited title", description="edited description", color=0xFFD500)
-            #embedEdit.set_image(url=f"http://ddragon.leagueoflegends.com/cdn/img/champion/splash/{}.jpg")
-            #await interaction.message.edit(embed=embedEdit)
-
-    
-    
+###############################################
+   
     @bot.tree.command(name="googlechamp", description="Google a champion from League of Legends")
     @app_commands.describe(name="What is the champion's name?")
     async def googlechamp(ctx: commands.Context, name: str): #consider changing interaction: discord.Interaction to ctx: commands.Context found in previous command. might fix embed issue
         nameCorrect = name.capitalize()
+
+        if nameCorrect == "Aurelionsol":
+            nameCorrect = "AurelionSol"
+        elif nameCorrect == "Wukong":
+            nameCorrect = "MonkeyKing"
+        elif nameCorrect == "Monkeyking":
+            nameCorrect = "MonkeyKing"
+        
+        print(nameCorrect)
+
         url = f"http://ddragon.leagueoflegends.com/cdn/13.6.1/data/en_US/champion/{nameCorrect}.json"
         global nameEdit
         nameEdit = nameCorrect
@@ -556,6 +575,22 @@ def run_discord_bot():
         champBanner = f"http://ddragon.leagueoflegends.com/cdn/img/champion/splash/{nameCorrect}_0.jpg"
 
         response = requests.get(url)
+
+        with open('Tierlist.csv') as file_obj:
+
+            reader_obj = csv.reader(file_obj)
+            for row in reader_obj:
+                try:
+                    if row[0] == nameCorrect:
+                        global winr
+                        global banr
+                        winr = row[1]
+                        banr = row[2]
+                except:
+                    continue
+        print(winr)
+        print(banr)
+        
 
         if response.status_code == 200:
             data = response.json()
@@ -601,7 +636,7 @@ def run_discord_bot():
                 #print(ability_message)
 
                 #await ctx.response.send_message(f"```Champion Name: {name} \n\nChampion Title: {title} \n\nBio: {blurb} \n\nChampion Base Stats: \n\tHealth Points: {baseHP} \n\tAttack Damage: {baseAD} \n\tMagic Damage: {baseAP}\n\n\n Spells:\n\n{ability_message}``` \n{champBanner}")
-                embed = discord.Embed(title=f"__{nameCorrect}, {title}__", description=f"\n\n\n**Bio:** {blurb} \n\n **Difficulty:** {difficulty} / 10", color=0xFFD500)
+                embed = discord.Embed(title=f"__{nameCorrect}, {title}__", description=f"\n\n\n**Bio:** {blurb} \n\n **Difficulty:** {difficulty} / 10 \n\n **Winrate:** {winr}\n **Ban Rate:** {banr}", color=0xFFD500)
                 embed.set_image(url=champBanner)
                 await ctx.response.send_message(embed=embed, view=MyViewMore())
 
@@ -618,7 +653,7 @@ def run_discord_bot():
         @discord.ui.button(label="More", style=discord.ButtonStyle.primary)
         async def button_callback(self, interaction: discord.Interaction, button: discord.ui.button):
 
-            embedEdit = discord.Embed(title=f"__{nameEdit}, {title}__", description=f"\n\n\n**Bio:** {blurb} \n\n**Champion Base Stats:** \n\tHealth Points: {baseHP} \n\tAttack Damage: {baseAD} \n\tMagic Damage: {baseAP}\n\n **Difficulty:** {difficulty} / 10\n\n __Spells:__\n\n{ability_message}", color=0xFFD500)
+            embedEdit = discord.Embed(title=f"__{nameEdit}, {title}__", description=f"\n\n\n**Bio:** {blurb} \n\n**Champion Base Stats:** \n\tHealth Points: {baseHP} \n\tAttack Damage: {baseAD} \n\tMagic Damage: {baseAP}\n\n **Difficulty:** {difficulty} / 10\n\n **Winrate:** {winr}\n **Ban Rate:** {banr}\n\n __Spells:__\n\n{ability_message}", color=0xFFD500)
             embedEdit.set_image(url=champBanner)
             await interaction.message.edit(embed=embedEdit, view=MyViewLess())
             await interaction.response.defer()
@@ -627,10 +662,17 @@ def run_discord_bot():
         @discord.ui.button(label="Less", style=discord.ButtonStyle.primary)
         async def button_callback(self, interaction: discord.Interaction, button: discord.ui.button):
 
-            embedEditLess = discord.Embed(title=f"__{nameEdit}, {title}__", description=f"\n\n\n**Bio:** {blurb} \n\n **Difficulty:** {difficulty} / 10", color=0xFFD500)
+            embedEditLess = discord.Embed(title=f"__{nameEdit}, {title}__", description=f"\n\n\n**Bio:** {blurb} \n\n **Difficulty:** {difficulty} / 10\n\n **Winrate:** {winr}\n **Ban Rate:** {banr}", color=0xFFD500)
             embedEditLess.set_image(url=champBanner)
             await interaction.message.edit(embed=embedEditLess, view=MyViewMore())
             await interaction.response.defer()
     
+    #uses porofesor to get match info. Idk what to do with it
+
+    @bot.tree.command(name="test", description="test")
+    async def test(ctx: commands.Context, name: str):
+        url = ''
+
+
     
     bot.run(TOKEN_Discord)
