@@ -39,7 +39,7 @@ def run_discord_bot():
 
         #initializes the ugg scraper to rewrite the Tierlist.csv file (first part only, second part formats it in some way)
 
-    #with open("lol tier list.py") as f:
+    #with open("loltierlist.py") as f:
         #exec(f.read())
 
     #with open('Tierlist.csv', mode='r') as csv_file:
@@ -558,7 +558,6 @@ def run_discord_bot():
     @app_commands.describe(name="What is the champion's name?")
     async def googlechamp(ctx: commands.Context, name: str): #consider changing interaction: discord.Interaction to ctx: commands.Context found in previous command. might fix embed issue
         nameCorrect = name.capitalize()
-
         if nameCorrect == "Aurelionsol":
             nameCorrect = "AurelionSol"
         elif nameCorrect == "Wukong":
@@ -584,12 +583,15 @@ def run_discord_bot():
                     if row[0] == nameCorrect:
                         global winr
                         global banr
+                        global grade
                         winr = row[1]
                         banr = row[2]
+                        grade = row[3]
                 except:
                     continue
         print(winr)
         print(banr)
+        print(grade)
         
 
         if response.status_code == 200:
@@ -635,8 +637,26 @@ def run_discord_bot():
                     
                 #print(ability_message)
 
+                global embColor
+
+                if grade == "S+":
+                    embColor = int(hex(0xFF9B00), 0)
+                elif grade == "S":
+                    embColor = int(hex(0x3273F4), 0)
+                elif grade == "A":
+                    embColor = int(hex(0x5A80D6), 0)
+                elif grade == "B":
+                    embColor = int(hex(0xFFFBF2), 0)
+                elif grade == "C":
+                    embColor = int(hex(0xFCB1AE), 0)
+                elif grade == "D":
+                    embColor = int(hex(0xFF4246), 0)
+
+                print(embColor)
+
                 #await ctx.response.send_message(f"```Champion Name: {name} \n\nChampion Title: {title} \n\nBio: {blurb} \n\nChampion Base Stats: \n\tHealth Points: {baseHP} \n\tAttack Damage: {baseAD} \n\tMagic Damage: {baseAP}\n\n\n Spells:\n\n{ability_message}``` \n{champBanner}")
-                embed = discord.Embed(title=f"__{nameCorrect}, {title}__", description=f"\n\n\n**Bio:** {blurb} \n\n **Difficulty:** {difficulty} / 10 \n\n **Winrate:** {winr}\n **Ban Rate:** {banr}", color=0xFFD500)
+                #embed = discord.Embed(title=f"__{nameCorrect}, {title}__", description=f"**{grade}**\n\n**Bio:** {blurb} \n\n **Difficulty:** {difficulty} / 10 \n\n **Winrate:** {winr}\n **Ban Rate:** {banr}", color=embColor)
+                embed = discord.Embed(title=f"__{nameCorrect}, {title}__", description=f"**{grade}**\n\n**Difficulty:** {difficulty} / 10\n**Winrate:** {winr}\n**Ban Rate:** {banr}\n\n**Bio:**{blurb}", color=embColor)
                 embed.set_image(url=champBanner)
                 await ctx.response.send_message(embed=embed, view=MyViewMore())
 
@@ -653,7 +673,7 @@ def run_discord_bot():
         @discord.ui.button(label="More", style=discord.ButtonStyle.primary)
         async def button_callback(self, interaction: discord.Interaction, button: discord.ui.button):
 
-            embedEdit = discord.Embed(title=f"__{nameEdit}, {title}__", description=f"\n\n\n**Bio:** {blurb} \n\n**Champion Base Stats:** \n\tHealth Points: {baseHP} \n\tAttack Damage: {baseAD} \n\tMagic Damage: {baseAP}\n\n **Difficulty:** {difficulty} / 10\n\n **Winrate:** {winr}\n **Ban Rate:** {banr}\n\n __Spells:__\n\n{ability_message}", color=0xFFD500)
+            embedEdit = discord.Embed(title=f"__{nameEdit}, {title}__", description=f"**{grade}**\n\n**Difficulty:** {difficulty} / 10\n**Winrate:** {winr}\n**Ban Rate:** {banr}\n\n**Bio:**{blurb}\n\n __Spells:__\n\n{ability_message}", color=embColor)
             embedEdit.set_image(url=champBanner)
             await interaction.message.edit(embed=embedEdit, view=MyViewLess())
             await interaction.response.defer()
@@ -662,7 +682,7 @@ def run_discord_bot():
         @discord.ui.button(label="Less", style=discord.ButtonStyle.primary)
         async def button_callback(self, interaction: discord.Interaction, button: discord.ui.button):
 
-            embedEditLess = discord.Embed(title=f"__{nameEdit}, {title}__", description=f"\n\n\n**Bio:** {blurb} \n\n **Difficulty:** {difficulty} / 10\n\n **Winrate:** {winr}\n **Ban Rate:** {banr}", color=0xFFD500)
+            embedEditLess = discord.Embed(title=f"__{nameEdit}, {title}__", description=f"**{grade}**\n\n**Difficulty:** {difficulty} / 10\n**Winrate:** {winr}\n**Ban Rate:** {banr}\n\n**Bio:**{blurb}", color=embColor)
             embedEditLess.set_image(url=champBanner)
             await interaction.message.edit(embed=embedEditLess, view=MyViewMore())
             await interaction.response.defer()
@@ -670,8 +690,11 @@ def run_discord_bot():
     #uses porofesor to get match info. Idk what to do with it
 
     @bot.tree.command(name="test", description="test")
-    async def test(ctx: commands.Context, name: str):
-        url = ''
+    async def test(interaction: discord.Interaction):
+        http =urllib3.PoolManager()
+        response = http.request('GET','https://u.gg/lol/champions/aatrox/build/top')
+        data = response.data
+        print(data)
 
 
     
