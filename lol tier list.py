@@ -26,8 +26,9 @@ wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.rt-tr-grou
 champions = []
 win_rates = []
 pick_rates = []
-
-writer.writerow(['Champion Name', 'Win Rate', 'Ban Rate'])
+test_1 = []
+champion_grades = []
+writer.writerow(['Champion Name', 'Win Rate', 'Ban Rate', 'Champion Grade'])
 
 while True:
     # Scroll to the bottom of the page
@@ -49,16 +50,27 @@ while True:
         champion = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(3)").get_attribute("textContent")
         win_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(5)").text.strip()
         pick_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(6)").text.strip()
+        test1 = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(1)").get_attribute("textContent")
+        test2 = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(2)").get_attribute("textContent")
+        champion_grade = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(4)").text.strip()
+        test7 = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(7)").text.strip()
             
         champions.append(champion)
         win_rates.append(win_rate)
         pick_rates.append(pick_rate)
+        test_1.append(test1)
+        champion_grades.append(champion_grade)
 
-        writer.writerow([champion, win_rate, pick_rate])
+        writer.writerow([champion, win_rate, pick_rate, champion_grade])
 
 #print(champions)
 #print(win_rates)
 #print(pick_rates)
+print(test1)
+print(test2)
+print(test7)
+print("-----")
+print(test_1)
 
 driver.quit()
 
