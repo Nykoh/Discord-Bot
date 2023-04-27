@@ -584,9 +584,11 @@ def run_discord_bot():
                         global winr
                         global banr
                         global grade
+                        global matches
                         winr = row[1]
                         banr = row[2]
                         grade = row[3]
+                        matches = row[4]
                 except:
                     continue
         print(winr)
@@ -656,8 +658,9 @@ def run_discord_bot():
 
                 #await ctx.response.send_message(f"```Champion Name: {name} \n\nChampion Title: {title} \n\nBio: {blurb} \n\nChampion Base Stats: \n\tHealth Points: {baseHP} \n\tAttack Damage: {baseAD} \n\tMagic Damage: {baseAP}\n\n\n Spells:\n\n{ability_message}``` \n{champBanner}")
                 #embed = discord.Embed(title=f"__{nameCorrect}, {title}__", description=f"**{grade}**\n\n**Bio:** {blurb} \n\n **Difficulty:** {difficulty} / 10 \n\n **Winrate:** {winr}\n **Ban Rate:** {banr}", color=embColor)
-                embed = discord.Embed(title=f"__{nameCorrect}, {title}__", description=f"**{grade}**\n\n**Difficulty:** {difficulty} / 10\n**Winrate:** {winr}\n**Ban Rate:** {banr}\n\n**Bio:**{blurb}", color=embColor)
+                embed = discord.Embed(title=f"__{nameCorrect}, {title}__", description=f"**Tier:** {grade}\n\n**Difficulty:** {difficulty} / 10\n**Winrate:** {winr}\n**Ban Rate:** {banr}\n\n**Bio:** {blurb}", color=embColor)
                 embed.set_image(url=champBanner)
+                embed.set_footer(text=f"{matches} matches this patch.")
                 await ctx.response.send_message(embed=embed, view=MyViewMore())
 
                 
@@ -673,8 +676,9 @@ def run_discord_bot():
         @discord.ui.button(label="More", style=discord.ButtonStyle.primary)
         async def button_callback(self, interaction: discord.Interaction, button: discord.ui.button):
 
-            embedEdit = discord.Embed(title=f"__{nameEdit}, {title}__", description=f"**{grade}**\n\n**Difficulty:** {difficulty} / 10\n**Winrate:** {winr}\n**Ban Rate:** {banr}\n\n**Bio:**{blurb}\n\n __Spells:__\n\n{ability_message}", color=embColor)
+            embedEdit = discord.Embed(title=f"__{nameEdit}, {title}__", description=f"**Tier:** {grade}\n\n**Difficulty:** {difficulty} / 10\n**Winrate:** {winr}\n**Ban Rate:** {banr}\n\n**Bio:** {blurb}\n\n __Spells:__\n\n{ability_message}", color=embColor)
             embedEdit.set_image(url=champBanner)
+            embedEdit.set_footer(text=f"{matches} matches this patch.")
             await interaction.message.edit(embed=embedEdit, view=MyViewLess())
             await interaction.response.defer()
     
@@ -682,8 +686,9 @@ def run_discord_bot():
         @discord.ui.button(label="Less", style=discord.ButtonStyle.primary)
         async def button_callback(self, interaction: discord.Interaction, button: discord.ui.button):
 
-            embedEditLess = discord.Embed(title=f"__{nameEdit}, {title}__", description=f"**{grade}**\n\n**Difficulty:** {difficulty} / 10\n**Winrate:** {winr}\n**Ban Rate:** {banr}\n\n**Bio:**{blurb}", color=embColor)
+            embedEditLess = discord.Embed(title=f"__{nameEdit}, {title}__", description=f"**Tier:** {grade}\n\n**Difficulty:** {difficulty} / 10\n**Winrate:** {winr}\n**Ban Rate:** {banr}\n\n**Bio:** {blurb}", color=embColor)
             embedEditLess.set_image(url=champBanner)
+            embedEditLess.set_footer(text=f"{matches} matches this patch.")
             await interaction.message.edit(embed=embedEditLess, view=MyViewMore())
             await interaction.response.defer()
     
