@@ -33,8 +33,8 @@ def run_discord_bot():
     print(startTime)
 
     bot = commands.Bot(command_prefix='--', intents=intents) 
-    TOKEN_Discord = ""
-    TOKEN_Riot = ""
+    TOKEN_Discord = "MTA3NTI5NjU2NjI5MTczMDQ2Mg.GgDsnn.XtTXvIAr8LqiMRY-tS2Gv7bfv4Cv90uTAfzZog"
+    TOKEN_Riot = "RGAPI-56e904c0-4957-432e-804b-bc9526522d59"
 
 
         #initializes the ugg scraper to rewrite the Tierlist.csv file (first part only, second part formats it in some way)
@@ -360,9 +360,9 @@ def run_discord_bot():
         print(sLevel)
         
         champions = []
-        arrids, arrlevels, arrpoints, arrname, arrimgs = [], [], [], [], []
-        championsURL = "http://ddragon.leagueoflegends.com/cdn/12.6.1/data/en_US/champion.json"
-        iconURL = "http://ddragon.leagueoflegends.com/cdn/12.18.1/img/champion/"
+        arrids, arrlevels, arrpoints, arrname, arrimgs, arrspellid1, arrspell1, arrspellid2, arrspell2, arrperkId, arrperk = [], [], [], [], [], [], [], [], [], [], []
+        championsURL = "http://ddragon.leagueoflegends.com/cdn/13.9.1/data/en_US/champion.json"
+        iconURL = "http://ddragon.leagueoflegends.com/cdn/13.9.1/img/champion/"
 
         API_Riot_Game = f"https://na1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/" + encryptedSummonerId + "?api_key=" + TOKEN_Riot
         
@@ -374,8 +374,8 @@ def run_discord_bot():
         gameMode = str(CurrentGameParticipant['gameMode'])
         participants = (CurrentGameParticipant['participants'])
         gameId = (CurrentGameParticipant['gameId'])
-        print(participants) #work on making finishing spec match (maybe by doing something like porofessor)
 
+        print("in the current game:")
         print(participants)
         for champion in participants:
             arrids.append(champion['championId'])     
@@ -390,108 +390,150 @@ def run_discord_bot():
                 if int(wantedChampion) == int(championId):
                     arrname.append(nameChamp)
                     arrimgs.append(iconURL + nameChamp + ".png")
-        #print(participants[0])
-        #print(participants[1])
-
         
-        
-        
-        #Match info (kills, etc)
-        
-        #API_Riot_Summoner = f"https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{name}"
-        #responseGameSummoner = requests.get(API_Riot_Summoner)
-        #CurrentGameSummoner = responseGameSummoner.json()
-
-        #puuid = (CurrentGameSummoner['puuid'])
-        #print(puuid)
-        #print("this the the thing")
-
-        #API_Riot_Game_Match = f"https://na1.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids"
-        #responseGameMatch = requests.get(API_Riot_Game_Match)
-        #summonerGameMatch = responseGameMatch.json()
-        #print(summonerGameMatch)
-
-        #API_Riot_Game_Info = f"https://na1.api.riotgames.com/lol/match/v5/matches/{gameId}" #need to use differnet puuid match api for it to work
-        #responseGameInfo = requests.get(API_Riot_Game_Info)
-        #CurrentGameInfo = responseGameInfo.json()
-
-        #infoData =  (CurrentGameInfo['info'])
-        #print(infoData)
-
         print(arrname)
         print(arrimgs)
 
+        #summoner spell 1
+        spells = []
+        for spell in participants:
+            arrspellid1.append(spell['spell1Id'])
+
+        spellsURL = f"http://ddragon.leagueoflegends.com/cdn/13.9.1/data/en_US/summoner.json"
+        spells_db = requests.get(spellsURL).json()
+        [spells.append(spell) for spell in spells_db['data']]
+
+        for spell1Id in arrspellid1:
+            for nameSpell in spells:
+                wantedSpell = spells_db['data'][nameSpell]['key']
+                if int(wantedSpell) == int(spell1Id):
+                    arrspell1.append(nameSpell)
+        
+        print(arrspellid1)
+        print(arrspell1)
+
+        #summoner spell 2
+        spells = []
+        for spell in participants:
+            arrspellid2.append(spell['spell2Id'])
+
+        spellsURL = f"http://ddragon.leagueoflegends.com/cdn/13.9.1/data/en_US/summoner.json"
+        spells_db = requests.get(spellsURL).json()
+        [spells.append(spell) for spell in spells_db['data']]
+
+        for spell2Id in arrspellid2:
+            for nameSpell in spells:
+                wantedSpell = spells_db['data'][nameSpell]['key']
+                if int(wantedSpell) == int(spell2Id):
+                    arrspell2.append(nameSpell)
+        
+        print(arrspellid2)
+        print(arrspell2)
+        
+        #change spell names
+        arrspell1 = [sub.replace('Summoner', '') for sub in arrspell1]
+        arrspell2 = [sub.replace('Summoner', '') for sub in arrspell2]
+        arrspell1 = [sub.replace('Dot', 'Ignite') for sub in arrspell1]
+        arrspell2 = [sub.replace('Dot', 'Ignite') for sub in arrspell2]
+
+        #runes
+        runes = []
+        for rune in participants:
+            arrperkId.append(rune['perks'])
+
+
+        print(arrperkId)
+
+        runesURL = f"http://ddragon.leagueoflegends.com/cdn/13.9.1/data/en_US/runesReforged.json"
+        runes_db = requests.get(runesURL).json()
+        [runes.append(rune) for rune in runes_db]
+
+        for perks in arrperkId:
+            for nameRune in runes:
+                wantedRune = runes_db[nameRune]['id'] #not working
+                if int(wantedRune) == int(perks):
+                    arrperk.append(nameRune)
+        
+        print(arrperkId)
+        print(arrperk)
+
+
+        #gamemode
         if gameMode == 'CLASSIC':
             gameMode = "Summoner's Rift"
+
+        bSide = f"{participants[0]['summonerName']} ({arrname[0]})\n{participants[1]['summonerName']} ({arrname[1]})\n{participants[2]['summonerName']} ({arrname[2]})\n{participants[3]['summonerName']} ({arrname[3]})\n{participants[4]['summonerName']} ({arrname[4]})\n"
+        rSide = f"{participants[5]['summonerName']} ({arrname[5]})\n{participants[6]['summonerName']} ({arrname[6]})\n{participants[7]['summonerName']} ({arrname[7]})\n{participants[8]['summonerName']} ({arrname[8]})\n{participants[9]['summonerName']} ({arrname[9]})\n"
+
 
         if name == participants[0]['summonerName']:
             print("it worked")
             print("1")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[0]}`.")
-            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[0]}.", color=0xFFD500)
+            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[0]}.\n\n{arrspell1[0]} / {arrspell2[0]} \n\n**:blue_square: Blue Side:** \n{bSide}\n\n**:red_square: Red Side:** \n{rSide}", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[0])
             await ctx.response.send_message(embed=embed)
         elif name == participants[1]['summonerName']:
             print("it worked")
             print("2")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[1]}`.")
-            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[1]}.", color=0xFFD500)
+            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[1]}.\n\n{arrspell1[1]} / {arrspell2[1]} \n\n**:blue_square: Blue Side:** \n{bSide}\n\n**:red_square: Red Side:** \n{rSide}", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[1])
             await ctx.response.send_message(embed=embed)
         elif name == participants[2]['summonerName']:
             print("it worked")
             print("3")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[2]}`.")
-            embed = discord.Embed(title=name, ddescription=f"{gameMode} \n\n Currently playing {arrname[2]}.", color=0xFFD500)
+            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[2]}.\n\n{arrspell1[2]} / {arrspell2[2]} \n\n**:blue_square: Blue Side:** \n{bSide}\n\n**:red_square: Red Side:** \n{rSide}", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[2])
             await ctx.response.send_message(embed=embed)
         elif name == participants[3]['summonerName']:
             print("it worked")
             print("4")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[3]}`.")
-            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[3]}.", color=0xFFD500)
+            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[3]}.\n\n{arrspell1[3]} / {arrspell2[3]} \n\n**:blue_square: Blue Side:** \n{bSide}\n\n**:red_square: Red Side:** \n{rSide}", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[3])
             await ctx.response.send_message(embed=embed)
         elif name == participants[4]['summonerName']:
             print("it worked")
             print("5")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[4]}`.")
-            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[4]}.", color=0xFFD500)
+            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[4]}.\n\n{arrspell1[4]} / {arrspell2[4]} \n\n**:blue_square: Blue Side:** \n{bSide}\n\n**:red_square: Red Side:** \n{rSide}", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[4])
             await ctx.response.send_message(embed=embed)
         elif name == participants[5]['summonerName']:
             print("it worked")
             print("6")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[5]}`.")
-            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[5]}.", color=0xFFD500)
+            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[5]}.\n\n{arrspell1[5]} / {arrspell2[5]} \n\n**:blue_square: Blue Side:** \n{bSide}\n\n**:red_square: Red Side:** \n{rSide}", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[5])
             await ctx.response.send_message(embed=embed)
         elif name == participants[6]['summonerName']:
             print("it worked")
             print("7")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[6]}`.")
-            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[6]}.", color=0xFFD500)
+            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[6]}.\n\n{arrspell1[6]} / {arrspell2[6]} \n\n**:blue_square: Blue Side:** \n{bSide}\n\n**:red_square: Red Side:** \n{rSide}", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[6])
             await ctx.response.send_message(embed=embed)
         elif name == participants[7]['summonerName']:
             print("it worked")
             print("8")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[7]}`.")
-            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[7]}.", color=0xFFD500)
+            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[7]}.\n\n{arrspell1[7]} / {arrspell2[7]} \n\n**:blue_square: Blue Side:** \n{bSide}\n\n**:red_square: Red Side:** \n{rSide}", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[7])
             await ctx.response.send_message(embed=embed)
         elif name == participants[8]['summonerName']:
             print("it worked")
             print("9")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[8]}`.")
-            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[8]}.", color=0xFFD500)
+            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[8]}.\n\n{arrspell1[8]} / {arrspell2[8]} \n\n**:blue_square: Blue Side:** \n{bSide}\n\n**:red_square: Red Side:** \n{rSide}", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[8])
             await ctx.response.send_message(embed=embed)
         elif name == participants[9]['summonerName']:
             print("it worked")
             print("10")
             #await ctx.response.send_message(f"The summoner `{name}` is currently playing the `{gameMode}` gamemode. \n They are playing `{arrname[9]}`.")
-            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[9]}.", color=0xFFD500)
+            embed = discord.Embed(title=name, description=f"{gameMode} \n\n Currently playing {arrname[9]}.\n\n{arrspell1[9]} / {arrspell2[9]} \n\n**:blue_square: Blue Side:** \n{bSide}\n\n**:red_square: Red Side:** \n{rSide}", color=0xFFD500)
             embed.set_thumbnail(url=arrimgs[9])
             await ctx.response.send_message(embed=embed)
         else:
@@ -547,7 +589,7 @@ def run_discord_bot():
         timeDifference = int(round(currentTime - startTime))
         convertTime = str(datetime.timedelta(seconds = timeDifference))
         print(f"The bot has been running for {timeDifference} seconds.")
-        await interaction.response.send_message(f"The bot has been running for `{convertTime}` seconds.")
+        await interaction.response.send_message(f"The bot has been running for `{convertTime}`.")
 
          
 ###############################################
@@ -704,3 +746,4 @@ def run_discord_bot():
 
     
     bot.run(TOKEN_Discord)
+   
