@@ -33,8 +33,8 @@ def run_discord_bot():
     print(startTime)
 
     bot = commands.Bot(command_prefix='--', intents=intents) 
-    TOKEN_Discord = "MTA3NTI5NjU2NjI5MTczMDQ2Mg.GgDsnn.XtTXvIAr8LqiMRY-tS2Gv7bfv4Cv90uTAfzZog"
-    TOKEN_Riot = "RGAPI-56e904c0-4957-432e-804b-bc9526522d59"
+    TOKEN_Discord = ""
+    TOKEN_Riot = ""
 
 
         #initializes the ugg scraper to rewrite the Tierlist.csv file (first part only, second part formats it in some way)
